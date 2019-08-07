@@ -1,0 +1,13 @@
+ssr:
+  handler: src/sls.entry.ssr
+  events:
+    - http: 
+        path: /
+        method: GET
+    - http: 
+        path: /{proxy+}
+        method: ANY
+    - http: 
+        path: /{proxy+}
+        method: OPTIONS
+

@@ -1,0 +1,27 @@
+{
+  "name": "youtube-oauth-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./src/index.js",
+    "deploy:dev": "SLS_DEBUG=* sls deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotsu/youtube-oauth-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gotsu/youtube-oauth-api/issues"
+  },
+  "homepage": "https://github.com/gotsu/youtube-oauth-api#readme",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "serverless-http": "^2.0.2"
+  },
+  "devDependencies": {}
+}
