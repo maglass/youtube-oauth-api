@@ -1,9 +1,24 @@
 #!/bin/bash
-export NODE_ENV=development
 export NODE_PATH=src
 
 export AWS_DEFAULT_REGION=ap-northeast-2
 export AWS_REGION=ap-northeast-2
 export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
+
+export DATASOURCE_PG_HOST=
+export DATASOURCE_PG_PORT=
+export DATASOURCE_PG_USERNAME=
+export DATASOURCE_PG_PASSWORD=
+export DATASOURCE_PG_DATABASE=
+
+export API_HOST=
+
+export GOOGLE_OAUTH2_ENDPOINT=
+export GOOGLE_OAUTH2_ENDPOINT_GET_TOKEN=
+
+export GOOGLE_OAUTH2_CLIENT_ID=
+export GOOGLE_OAUTH2_CLIENT_SECRET=
+
+
 echo "쨔라쟌~"

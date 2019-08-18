@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./src/index.js",
+    "ngrok": "ngrok http 4000",
     "deploy:dev": "SLS_DEBUG=* sls deploy"
   },
   "repository": {
@@ -21,7 +22,12 @@
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
+    "pg": "^7.12.1",
+    "query-string": "^6.8.2",
+    "request": "^2.88.0",
     "serverless-http": "^2.0.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^2.1.1"
+  }
 }

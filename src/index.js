@@ -1,4 +1,4 @@
 const Server = require('./server')
 
 const server = new Server()
-server.listen(4001)
+server.listen(4000)

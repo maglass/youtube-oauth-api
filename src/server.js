@@ -1,6 +1,10 @@
 const Koa = require('koa')
 const Router = require('koa-router')
 
+const api = require('api')
+
+
+
 class Server {
   constructor() {
     this.app = new Koa()
@@ -10,7 +14,7 @@ class Server {
 
   middleware() {
     const { app, router } = this
-
+    router.use(api.routes())
     app.use(router.routes())
     app.use(router.allowedMethods())
   }
@@ -21,5 +25,7 @@ class Server {
     console.log('Listening to port', port)
   }
 }
+
+
 
 module.exports = Server

@@ -3,4 +3,4 @@ const serverlessHttp = require('serverless-http')
 
 const server = new Server()
 
-module.exports.ssr = (event, context, cb) => serverlessHttp(server.app)(event, context, cb)
+module.exports.api = (event, context, cb) => serverlessHttp(server.app)(event, context, cb)

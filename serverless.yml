@@ -1,5 +1,6 @@
 service:
   name: youtube-google-oauth-api
+
 provider:
   name: aws
   runtime: nodejs10.x
@@ -8,7 +9,19 @@ provider:
   memorySize: 512 # Overwrite the default memory size. Default is 1024
   environment:
     NODE_ENV: ${self:provider.stage}
-    NODE_PATH: ${env:NODE_ENV}
+    NODE_PATH: ${env:NODE_PATH}
+    API_HOST: ${env:API_HOST}
+    DATASOURCE_PG_HOST: ${env:DATASOURCE_PG_HOST}
+    DATASOURCE_PG_PORT: ${env:DATASOURCE_PG_PORT}
+    DATASOURCE_PG_USERNAME: ${env:DATASOURCE_PG_USERNAME}
+    DATASOURCE_PG_PASSWORD: ${env:DATASOURCE_PG_PASSWORD}
+    DATASOURCE_PG_DATABASE: ${env:DATASOURCE_PG_DATABASE}
+
+    GOOGLE_OAUTH2_ENDPOINT: ${env:GOOGLE_OAUTH2_ENDPOINT}
+    GOOGLE_OAUTH2_ENDPOINT_GET_TOKEN: ${env:GOOGLE_OAUTH2_ENDPOINT_GET_TOKEN}
+    GOOGLE_OAUTH2_CLIENT_ID: ${env:GOOGLE_OAUTH2_CLIENT_ID}
+    GOOGLE_OAUTH2_CLIENT_SECRET: ${env:GOOGLE_OAUTH2_CLIENT_SECRET}
+
   deploymentBucket:
     name: youtube-google-oauth-api.sls.${self:provider.stage} # Overwrite the default deployment bucket
     serverSideEncryption: AES256 # when using server-side encryption
