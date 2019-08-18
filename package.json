@@ -27,7 +27,5 @@
     "request": "^2.88.0",
     "serverless-http": "^2.0.2"
   },
-  "devDependencies": {
-    "serverless-dotenv-plugin": "^2.1.1"
-  }
+  "devDependencies": {}
 }
