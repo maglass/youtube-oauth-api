@@ -1,5 +1,5 @@
 const queryString = require('query-string')
-const db = require('model/db')
+const DBClient = require('model/db')
 const { requestPromise } = require('lib/promise')
 
 const {
@@ -34,8 +34,10 @@ const redirectGoogleAuthentication = async (ctx) => {
 
 
 const getTokensFromGoogleOAuth = async (ctx) => {
+  const client = new DBClient()
+
   try {
-    const params = ctx.request.query
+    const { query } = ctx.request
     const options = {
       method: 'POST',
       url: GOOGLE_OAUTH2_ENDPOINT_GET_TOKEN,
@@ -44,7 +46,7 @@ const getTokensFromGoogleOAuth = async (ctx) => {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       form: {
-        code: params.code,
+        code: query.code,
         client_id: GOOGLE_OAUTH2_CLIENT_ID,
         client_secret: GOOGLE_OAUTH2_CLIENT_SECRET,
         redirect_uri: `${API_HOST}/callback`,
@@ -78,9 +80,7 @@ const getTokensFromGoogleOAuth = async (ctx) => {
         current_timestamp
       )
     `
-
-    db.connect()
-    const queryResult = await db.queryPromise(sql, [bodyJSON.scope, bodyJSON.access_token, bodyJSON.refresh_token, bodyJSON.token_type, bodyJSON.expires_in])
+    const queryResult = await client.queryPromise(sql, [bodyJSON.scope, bodyJSON.access_token, bodyJSON.refresh_token, bodyJSON.token_type, bodyJSON.expires_in])
 
     if (queryResult.rowCount !== 1) {
       ctx.body = {
@@ -92,14 +92,85 @@ const getTokensFromGoogleOAuth = async (ctx) => {
   } catch (e) {
     console.log(e)
     ctx.body = {
-      error: e,
+      error: JSON.stringify(JSON.parse(e)),
     }
   } finally {
-    db.end()
+    client.end()
+  }
+}
+
+const refreshAccessToken = async (ctx) => {
+  const client = new DBClient()
+  try {
+    const { query } = ctx.request
+
+    const checkSql = `
+      SELECT
+        *
+      FROM
+        oauth_tokens
+      WHERE
+        access_token = $1
+    `
+
+    const selectQueryResult = await client.queryPromise(checkSql, [query.access_token])
+
+    if (!selectQueryResult.rows[0] || !selectQueryResult.rows[0].refresh_token) {
+      ctx.body = { error: `doesn't exist refresh_key about this [${query.access_token}]` }
+      return
+    }
+    const { idx, refresh_token } = selectQueryResult.rows[0]
+
+    const options = {
+      method: 'POST',
+      url: GOOGLE_OAUTH2_ENDPOINT_GET_TOKEN,
+      headers: {
+        Host: 'www.googleapis.com',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      form: {
+        client_id: GOOGLE_OAUTH2_CLIENT_ID,
+        client_secret: GOOGLE_OAUTH2_CLIENT_SECRET,
+        refresh_token,
+        grant_type: 'refresh_token',
+      },
+    }
+
+    const { body } = await requestPromise(options)
+    const bodyJSON = JSON.parse(body)
+    console.log(bodyJSON)
+
+    const updateSql = `
+      UPDATE
+        oauth_tokens
+      SET
+        access_token = $1,
+        expires_in = $2,
+        scope = $3,
+        token_type = $4,
+        updated_at = current_timestamp
+      WHERE
+        idx = $5
+    `
+
+    const updateQueryResult = await client.queryPromise(updateSql, [bodyJSON.access_token, bodyJSON.expires_in, bodyJSON.scope, bodyJSON.token_type, idx])
+    if (updateQueryResult.rowCount !== 1) {
+      ctx.body = { error: 'database error has occured' }
+    }
+
+    ctx.body = body
+  } catch (e) {
+    console.log(e)
+    ctx.body = {
+      error: JSON.stringify(JSON.parse(e)),
+    }
+  } finally {
+    client.end()
   }
 }
 
 module.exports = {
   redirectGoogleAuthentication,
   getTokensFromGoogleOAuth,
+  refreshAccessToken,
 }
