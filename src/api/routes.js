@@ -26,6 +26,7 @@ const redirectGoogleAuthentication = async (ctx) => {
     scope: SCOPES.join(' '),
     client_id: GOOGLE_OAUTH2_CLIENT_ID,
     response_type: 'code',
+    prompt: 'consent',
     access_type: 'offline'
   })
   ctx.redirect(`${GOOGLE_OAUTH2_ENDPOINT}?${qs}`)
@@ -79,7 +80,7 @@ const getTokensFromGoogleOAuth = async (ctx) => {
     `
 
     db.connect()
-    const queryResult = await db.queryPromise(sql, [bodyJSON.scope, bodyJSON.access_token, '', bodyJSON.token_type, bodyJSON.expires_in])
+    const queryResult = await db.queryPromise(sql, [bodyJSON.scope, bodyJSON.access_token, bodyJSON.refresh_token, bodyJSON.token_type, bodyJSON.expires_in])
 
     if (queryResult.rowCount !== 1) {
       ctx.body = {
